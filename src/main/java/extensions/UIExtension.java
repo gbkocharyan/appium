@@ -16,7 +16,7 @@ public class UIExtension implements BeforeEachCallback, AfterEachCallback, Befor
 
   protected AppiumDriver driver;
   private final DriverFactory driverFactory = new DriverFactory();
-  private static final Logger logger = LoggerFactory.getLogger(UIExtension.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(UIExtension.class);
 
 
   @Override
@@ -49,7 +49,7 @@ public class UIExtension implements BeforeEachCallback, AfterEachCallback, Befor
         Guice.createInjector(new GuiceModule()).injectMembers(testInstance);
       });
     } catch (Exception e) {
-      logger.error("An error occurred in beforeEach method.", e);
+      LOGGER.error("An error occurred in beforeEach method.", e);
     }
   }
 

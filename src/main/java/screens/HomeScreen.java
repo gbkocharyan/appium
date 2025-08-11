@@ -1,11 +1,11 @@
 package screens;
 
+import static com.codeborne.selenide.appium.SelenideAppium.$;
+
 import com.codeborne.selenide.SelenideElement;
 import com.codeborne.selenide.WebDriverRunner;
 import io.appium.java_client.AppiumBy;
 import org.openqa.selenium.WebDriver;
-
-import static com.codeborne.selenide.appium.SelenideAppium.$;
 
 public class HomeScreen {
 
