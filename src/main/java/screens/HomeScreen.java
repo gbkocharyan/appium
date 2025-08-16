@@ -10,7 +10,6 @@ import org.openqa.selenium.WebDriver;
 public class HomeScreen {
 
   public HomeScreen() {
-    WebDriver driver = WebDriverRunner.getWebDriver();
   }
 
   private final SelenideElement dillers = $(AppiumBy.id("imageCardThreeHomeScreen"));

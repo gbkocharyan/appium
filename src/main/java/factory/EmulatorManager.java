@@ -7,25 +7,15 @@ import java.nio.charset.StandardCharsets;
 
 public class EmulatorManager {
 
+  private static Process emulatorProcess;
+
   public static void startEmulator() throws IOException, InterruptedException {
     System.out.println("🔄 Starting Android Emulator...");
 
     String emulatorPath = "/Users/gevorg.kocharyan/Library/Android/sdk/emulator/emulator";
 
     // 1. List available AVDs
-    ProcessBuilder listAvdsBuilder = new ProcessBuilder(emulatorPath, "-list-avds");
-    Process listAvdsProcess = listAvdsBuilder.start();
-
-    java.io.BufferedReader reader = new java.io.BufferedReader(
-        new java.io.InputStreamReader(listAvdsProcess.getInputStream())
-    );
-
-    String avdName = reader.readLine(); // Get first AVD
-    listAvdsProcess.waitFor();
-
-    if (avdName == null || avdName.isEmpty()) {
-      throw new RuntimeException("❌ No AVDs found. Please create one in Android Studio AVD Manager.");
-    }
+    String avdName = getAvdName(emulatorPath);
 
     System.out.println("📱 Using AVD: " + avdName);
 
@@ -35,12 +25,42 @@ public class EmulatorManager {
         "-netspeed", "full", "-no-snapshot"
     );
     builder.inheritIO();
-    Process emulatorProcess = builder.start();
+    emulatorProcess = builder.start();
 
     // 3. Wait for the device to be ready
     waitForDevice();
 
     System.out.println("✅ Emulator started and ready.");
+  }
+
+  private static String getAvdName(String emulatorPath) throws IOException, InterruptedException {
+    ProcessBuilder listAvdsBuilder = new ProcessBuilder(emulatorPath, "-list-avds");
+    Process listAvdsProcess = listAvdsBuilder.start();
+
+    String avdName = null;
+    try (BufferedReader reader = new BufferedReader(
+        new InputStreamReader(listAvdsProcess.getInputStream(), StandardCharsets.UTF_8))) {
+      // Read the first line (first AVD)
+      avdName = reader.readLine();
+
+      // Optional: print all available AVDs
+      String line;
+      while ((line = reader.readLine()) != null) {
+        System.out.println(line);
+      }
+    }
+
+    // Wait for the process to finish
+    int exitCode = listAvdsProcess.waitFor();
+    if (exitCode != 0) {
+      throw new RuntimeException("❌ Failed to list AVDs, process exited with code " + exitCode);
+    }
+
+    if (avdName == null || avdName.isEmpty()) {
+      throw new RuntimeException("❌ No AVDs found. Please create one in Android Studio AVD Manager.");
+    }
+
+    return avdName;
   }
 
   public static void stopEmulator() throws IOException, InterruptedException {
@@ -51,14 +71,13 @@ public class EmulatorManager {
   }
 
   private static void waitForDevice() throws IOException, InterruptedException {
-    String adbPath = "/Users/gevorg.kocharyan/Library/Android/sdk/platform-tools/adb";
     System.out.println("⏳ Waiting for emulator to fully boot...");
 
     // Wait for device to be visible
-    new ProcessBuilder(adbPath, "wait-for-device").start().waitFor();
+    new ProcessBuilder("adb", "wait-for-device").start().waitFor();
 
     while (true) {
-      Process checkBoot = new ProcessBuilder(adbPath, "shell", "getprop", "sys.boot_completed").start();
+      Process checkBoot = new ProcessBuilder("adb", "shell", "getprop", "sys.boot_completed").start();
       try (BufferedReader reader = new BufferedReader(new InputStreamReader(checkBoot.getInputStream(), StandardCharsets.UTF_8))) {
         String line = reader.readLine();
         if (line != null && line.trim().equals("1")) {
@@ -70,7 +89,7 @@ public class EmulatorManager {
     }
 
     // Unlock the screen
-    new ProcessBuilder(adbPath, "shell", "input", "keyevent", "82").start();
+    new ProcessBuilder("adb", "shell", "input", "keyevent", "82").start();
   }
 
 }

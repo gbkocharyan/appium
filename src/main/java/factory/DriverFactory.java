@@ -9,7 +9,6 @@ public class DriverFactory {
   private static final String REMOTE_DEVICE_NAME = "emulator-5554";
   private static final String LOCAL_APPIUM_URL = "http://127.0.0.1:4723";
   private static final String REMOTE_APPIUM_URL = "http://45.132.17.22:4723/wd/hub";
-  private static final String APP_PACKAGE_NAME = "ru.skoda.service";
 
   public AppiumDriver createDriver() throws Exception {
     String executionMode = System.getProperty("runType").toLowerCase();
@@ -36,7 +35,6 @@ public class DriverFactory {
     capabilities.setCapability("appium:noReset", false);
     capabilities.setCapability("appium:uiautomator2ServerInstallTimeout", 180000);
     capabilities.setCapability("appium:adbExecTimeout", 180000);
-    capabilities.setCapability("appium:appPackage", APP_PACKAGE_NAME);
     capabilities.setCapability("appium:deviceName", REMOTE_DEVICE_NAME);
     return capabilities;
   }
