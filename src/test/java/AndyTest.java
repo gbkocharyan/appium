@@ -5,17 +5,20 @@ import extensions.UIExtension;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import screens.HomeScreen;
+import screens.WelcomeScreen;
 
 @ExtendWith(UIExtension.class)
-public class SkodaTest {
+public class AndyTest {
 
   @Inject
-  HomeScreen homeScreen;
+  WelcomeScreen welcomeScreen;
 
   @Test
   public void drillersButtonTest() {
-    assertTrue(homeScreen.isDrillersButtonDisplayed());
+    welcomeScreen
+        .clickNextButton()
+        .clickNextButton()
+        .clickSkipButton();
   }
 
 }

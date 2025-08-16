@@ -3,7 +3,7 @@ package factory;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 
-public class AppiumServerManager {
+public abstract class AppiumServerManager {
 
   private static final String EXECUTION_MODE = System.getProperty("runType").toLowerCase();
   private static final String APPIUM_LOG_FILE = "appium.log";
