@@ -40,7 +40,7 @@ public class DriverFactory {
   }
 
   private String getAppPath() {
-    return System.getProperty("user.dir") + "/src/test/resources/skoda.apk";
+    return System.getProperty("user.dir") + "/src/test/resources/andy.apk";
   }
 
 }
