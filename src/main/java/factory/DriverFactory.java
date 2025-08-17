@@ -17,7 +17,7 @@ public class DriverFactory {
     URL remoteUrl;
 
     if ("remote".equals(executionMode)) {
-      capabilities.setCapability("appium:app", "/root/tmp/skoda.apk");
+      capabilities.setCapability("appium:app", "/root/tmp/andy.apk");
       remoteUrl = new URL(REMOTE_APPIUM_URL);
     } else {
       capabilities.setCapability("appium:app", getAppPath());
