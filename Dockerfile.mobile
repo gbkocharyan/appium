@@ -1,0 +1,34 @@
+# Use Maven image
+FROM maven:3.9.4-eclipse-temurin-21
+
+# Install unzip and curl (required for Allure)
+RUN apt-get update -y && apt-get install -y unzip curl
+
+# Set environment variables
+ENV RUN_TYPE=remote
+ENV ALLURE_VERSION=2.34.1
+
+# Working directory
+WORKDIR /app
+
+# Copy project files
+COPY . /app
+
+# Install dependencies (compile without running tests)
+RUN mvn clean install -DskipTests
+
+# Install Allure CLI
+RUN curl -L -o /tmp/allure.zip https://github.com/allure-framework/allure2/releases/download/${ALLURE_VERSION}/allure-${ALLURE_VERSION}.zip \
+    && unzip /tmp/allure.zip -d /opt/ \
+    && rm /tmp/allure.zip \
+    && ln -s /opt/allure-${ALLURE_VERSION}/bin/allure /usr/bin/allure
+
+# Ensure Allure results folder exists
+RUN mkdir -p /app/allure-results /app/allure-report
+
+# Default command: run tests and generate Allure report
+CMD mvn clean test \
+      -DrunType=${RUN_TYPE} \
+      -Dsurefire.ignoreFailures=true \
+      -Dallure.results.directory=/app/allure-results \
+    && allure generate /app/allure-results -o /app/allure-report --clean
