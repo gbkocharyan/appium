@@ -18,6 +18,7 @@ public class DriverFactory {
 
     if ("remote".equals(executionMode)) {
       capabilities.setCapability("appium:app", "/root/tmp/andy.apk");
+      capabilities.setCapability("noSign", true);
       remoteUrl = new URL(REMOTE_APPIUM_URL);
     } else {
       capabilities.setCapability("appium:app", getAppPath());

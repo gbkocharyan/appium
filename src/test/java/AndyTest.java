@@ -1,16 +1,12 @@
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
-import extensions.UIExtension;
 import jakarta.inject.Inject;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
+import org.testng.annotations.Test;
 import screens.HomeScreen;
 import screens.WelcomeScreen;
 
-@ExtendWith(UIExtension.class)
-public class AndyTest {
+public class AndyTest extends TestBase {
 
   @Inject
   WelcomeScreen welcomeScreen;
