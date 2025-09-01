@@ -1,7 +1,7 @@
 import groovy.json.JsonSlurper
 import hudson.triggers.SCMTrigger
 
-node('maven') {
+node('maven_gev') {
 
     properties([
         parameters([
@@ -36,7 +36,7 @@ node('maven') {
             ])
         }
 
-        stage('Run UI Tests') {
+        stage('Run Mobile Tests') {
             sh "mkdir -p ${WORKSPACE}/allure-results ${WORKSPACE}/allure-report"
 
             sh """
