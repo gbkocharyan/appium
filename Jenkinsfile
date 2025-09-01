@@ -43,7 +43,7 @@ node('maven_gev') {
                 docker run --name mobile_tests \
                     -v ${WORKSPACE}/allure-results:/app/allure-results \
                     -v ${WORKSPACE}/allure-report:/app/allure-report \
-                    localhost:5005/mobile:latest || true
+                    localhost:5005/mobile_gev || true
             """
 
             // Copy results from container
