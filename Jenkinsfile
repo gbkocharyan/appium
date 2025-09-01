@@ -41,6 +41,8 @@ node('maven_gev') {
 
             sh """
                 docker run --name mobile_tests \
+                  -v /var/run/docker.sock:/var/run/docker.sock \
+                  -v jenkins_home:/var/jenkins_home \
                     -v ${WORKSPACE}/allure-results:/app/allure-results \
                     -v ${WORKSPACE}/allure-report:/app/allure-report \
                     localhost:5005/mobile_gev || true
