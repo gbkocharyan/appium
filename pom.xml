@@ -19,10 +19,18 @@
         <maven.surefire.version>3.5.3</maven.surefire.version>
         <guice.version>7.0.0</guice.version>
         <junit.version>5.12.1</junit.version>
+        <allure.version>2.23.0</allure.version>
         <runType>local</runType>
     </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>io.qameta.allure</groupId>
+            <artifactId>allure-testng</artifactId>
+            <version>${allure.version}</version>
+            <scope>test</scope>
+        </dependency>
+
         <dependency>
             <groupId>io.appium</groupId>
             <artifactId>java-client</artifactId>
@@ -155,6 +163,15 @@
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>io.qameta.allure</groupId>
+                <artifactId>allure-maven</artifactId>
+                <version>2.10.0</version>
+                <configuration>
+                    <resultsDirectory>allure-results</resultsDirectory>
+                    <reportDirectory>allure-report</reportDirectory>
+                </configuration>
             </plugin>
         </plugins>
     </build>
