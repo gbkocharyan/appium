@@ -42,17 +42,23 @@ node('maven_gev') {
             sh "chmod -R 777 ${WORKSPACE}/allure-results ${WORKSPACE}/allure-report"
             sh "docker rm -f appium || true"
 
+            // Run container and log everything
             sh """
+                echo "=== Starting Docker container ==="
                 docker run --name appium \
-                    -v ${WORKSPACE}/allure-results:/app/allure-results \
-                    -v ${WORKSPACE}/allure-report:/app/allure-report \
-                    localhost:5005/mobile_gev || true
+                  -v /var/run/docker.sock:/var/run/docker.sock \
+                  -v jenkins_home:/var/jenkins_home \
+                  -v ${WORKSPACE}/allure-results:/app/allure-results \
+                  -v ${WORKSPACE}/allure-report:/app/allure-report \
+                  localhost:5005/mobile_gev \
+                  bash -c "echo '=== Inside container ==='; whoami; pwd; ls -la /app; mvn clean test -DrunType=remote -Dsurefire.ignoreFailures=true -Dallure.results.directory=/app/allure-results || true; echo '=== After tests ==='; ls -la /app/allure-results"
             """
 
-            // Copy results from container
-          //  sh "docker cp mobile_tests:/app/target/allure-results ${WORKSPACE}/ || true"
+            // Copy results from container (if any)
             sh "docker cp appium:/app/allure-results ${WORKSPACE}/ || true"
-            sh "ls -la ${WORKSPACE}/allure-results"
+
+            // Log copied results
+            sh "echo '=== Local Allure Results ==='; ls -la ${WORKSPACE}/allure-results"
 
             archiveArtifacts artifacts: 'allure-results/**', fingerprint: true
             sh "docker rm -f appium || true"
@@ -60,30 +66,32 @@ node('maven_gev') {
 
     } finally {
         stage('Publish Allure & Notify') {
-                allure([
-                    includeProperties: false,
-                    reportBuildPolicy: 'ALWAYS',
-                    results: [[ path: "${WORKSPACE}/allure-results" ]]
-                ])
+            allure([
+                includeProperties: false,
+                reportBuildPolicy: 'ALWAYS',
+                results: [[ path: "${WORKSPACE}/allure-results" ]]
+            ])
 
-                try {
-                    def summaryFile = readFile("${WORKSPACE}/allure-report/widgets/summary.json")
-                    def summary = new JsonSlurper().parseText(summaryFile)
+            try {
+                sh "echo '=== Listing Allure Report folder ==='; ls -la ${WORKSPACE}/allure-report"
 
-                    def total = summary.statistic.total ?: 0
-                    def passed = summary.statistic.passed ?: 0
-                    def message = "📱 Mobile Test Execution Finished\n" +
-                                  "✅ Passed: ${passed}/${total}\n" +
-                                  "📊 Allure Report: ${env.BUILD_URL}allure"
+                def summaryFile = readFile("${WORKSPACE}/allure-report/widgets/summary.json")
+                def summary = new JsonSlurper().parseText(summaryFile)
 
-                    sh """
-                       curl -s -X POST https://api.telegram.org/bot8228531250:AAF4-CNqenOBmhO_U0qOq1pcpvMDNY0RvBU/sendMessage \
-                       -d chat_id=6877916742 \
-                       -d text="${message}"
-                    """
-                } catch (Exception e) {
-                    // ignore
-                }
+                def total = summary.statistic.total ?: 0
+                def passed = summary.statistic.passed ?: 0
+                def message = "📱 Mobile Test Execution Finished\n" +
+                              "✅ Passed: ${passed}/${total}\n" +
+                              "📊 Allure Report: ${env.BUILD_URL}allure"
+
+                sh """
+                   curl -s -X POST https://api.telegram.org/bot8228531250:AAF4-CNqenOBmhO_U0qOq1pcpvMDNY0RvBU/sendMessage \
+                   -d chat_id=6877916742 \
+                   -d text="${message}"
+                """
+            } catch (Exception e) {
+                // ignore
+            }
         }
     }
 }
