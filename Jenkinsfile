@@ -38,6 +38,7 @@ node('maven_gev') {
 
         stage('Run Mobile Tests') {
             sh "mkdir -p ${WORKSPACE}/allure-results ${WORKSPACE}/allure-report"
+            sh "docker rm -f appium || true"
 
             sh """
                 docker run --name appium \
