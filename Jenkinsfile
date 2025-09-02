@@ -50,7 +50,7 @@ node('maven_gev') {
 
             // Copy results from container
           //  sh "docker cp mobile_tests:/app/target/allure-results ${WORKSPACE}/ || true"
-            sh "docker cp mobile:/app/allure-results/. ${WORKSPACE}/ || true"
+            sh "docker cp mobile:/app/allure-results ${WORKSPACE}/ || true"
             archiveArtifacts artifacts: 'allure-results/**', fingerprint: true
             sh "docker rm -f mobile || true"
         }
