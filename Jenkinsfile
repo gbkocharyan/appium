@@ -40,17 +40,17 @@ node('maven_gev') {
             sh "mkdir -p ${WORKSPACE}/allure-results ${WORKSPACE}/allure-report"
 
             sh """
-                docker run --name appium \
+                docker run --name mobile \
                   -v ${WORKSPACE}/allure-results:/app/allure-results \
                   -v ${WORKSPACE}/allure-report:/app/allure-report \
                   localhost:5005/mobile_gev || true
             """
 
-            sh "docker cp appium:/app/allure-results ${WORKSPACE}/ || true"
+            sh "docker cp mobile:/app/allure-results ${WORKSPACE}/ || true"
 
             archiveArtifacts artifacts: 'allure-results/**', fingerprint: true
 
-            sh "docker rm -f appium || true"
+            sh "docker rm -f mobile || true"
         }
 
     } finally {
