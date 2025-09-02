@@ -78,8 +78,8 @@ node('maven_gev') {
 //                    -d chat_id=6877916742 \
 //                    -d text="${message}"
 //                 """
-//             } catch (Exception e) {
-//                 echo "Failed to read Allure summary: ${e}"
+            } catch (Exception e) {
+                echo "Failed to read Allure summary: ${e}"
             }
         }
     }
