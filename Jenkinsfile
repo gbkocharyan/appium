@@ -40,7 +40,7 @@ node('maven_gev') {
             sh "mkdir -p ${WORKSPACE}/allure-results ${WORKSPACE}/allure-report"
 
             sh """
-                docker run --rm --name appium \
+                docker run --name appium \
                   -v /var/run/docker.sock:/var/run/docker.sock \
                   -v jenkins_home:/var/jenkins_home \
                     -v ${WORKSPACE}/allure-results:/app/allure-results \
