@@ -52,6 +52,8 @@ node('maven_gev') {
             // Copy results from container
           //  sh "docker cp mobile_tests:/app/target/allure-results ${WORKSPACE}/ || true"
             sh "docker cp appium:/app/allure-results ${WORKSPACE}/ || true"
+            sh "ls -la ${WORKSPACE}/allure-results"
+
             archiveArtifacts artifacts: 'allure-results/**', fingerprint: true
             sh "docker rm -f appium || true"
         }
