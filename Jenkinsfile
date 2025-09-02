@@ -39,8 +39,10 @@ node('maven_gev') {
         stage('Run Mobile Tests') {
             sh "mkdir -p ${WORKSPACE}/allure-results ${WORKSPACE}/allure-report"
 
+            sh 'docker rm -f $(docker ps -aq)'
+
             sh """
-                docker run --name appium \
+                docker run -rm --name appium \
                   -v /var/run/docker.sock:/var/run/docker.sock \
                   -v jenkins_home:/var/jenkins_home \
                     -v ${WORKSPACE}/allure-results:/app/allure-results \
