@@ -40,7 +40,7 @@ node('maven_gev') {
             sh "mkdir -p ${WORKSPACE}/allure-results ${WORKSPACE}/allure-report"
 
             sh """
-                docker run --name mobile_tests \
+                docker run --name mobile \
                   -v /var/run/docker.sock:/var/run/docker.sock \
                   -v jenkins_home:/var/jenkins_home \
                     -v ${WORKSPACE}/allure-results:/app/allure-results \
@@ -50,9 +50,9 @@ node('maven_gev') {
 
             // Copy results from container
           //  sh "docker cp mobile_tests:/app/target/allure-results ${WORKSPACE}/ || true"
-            sh "docker cp mobile_tests:/app/allure-results ${WORKSPACE}/ || true"
+            sh "docker cp mobile:/app/allure-results ${WORKSPACE}/ || true"
             archiveArtifacts artifacts: 'allure-results/**', fingerprint: true
-            sh "docker rm -f mobile_tests || true"
+            sh "docker rm -f mobile || true"
         }
 
     } finally {
