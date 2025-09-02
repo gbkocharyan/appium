@@ -38,7 +38,6 @@ node('maven_gev') {
 
         stage('Run Mobile Tests') {
             sh "mkdir -p ${WORKSPACE}/allure-results ${WORKSPACE}/allure-report"
-            sh "sudo chown -R 1000:1000 ${WORKSPACE}/allure-results ${WORKSPACE}/allure-report"
             sh "chmod -R 777 ${WORKSPACE}/allure-results ${WORKSPACE}/allure-report"
             sh "docker rm -f appium || true"
 
