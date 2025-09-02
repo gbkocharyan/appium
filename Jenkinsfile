@@ -67,11 +67,9 @@ node('maven_gev') {
 
                 def total = summary.statistic.total ?: 0
                 def passed = summary.statistic.passed ?: 0
-                def message = """
-                📱 Mobile Test Execution Finished
-                ✅ Passed: ${passed}/${total}
-                📊 Allure Report: ${env.BUILD_URL}allure
-                """
+                def message = "📱 Mobile Test Execution Finished\n" +
+                              "✅ Passed: ${passed}/${total}\n" +
+                              "📊 Allure Report: ${env.BUILD_URL}allure"
 
                 sh """
                    curl -s -X POST https://api.telegram.org/bot7929159352:AAHz-nqnWNu1Qar1_xxnMGcUYGz2AwuQDNw/sendMessage \
