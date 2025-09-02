@@ -71,11 +71,11 @@ node('maven_gev') {
                               "✅ Passed: ${passed}/${total}\\n" +
                               "📊 Allure Report: ${env.BUILD_URL}allure"
 
-//                 sh """
-//                    curl -s -X POST https://api.telegram.org/bot8228531250:AAF4-CNqenOBmhO_U0qOq1pcpvMDNY0RvBU/sendMessage \
-//                    -d chat_id=6877916742 \
-//                    -d text="${message}"
-//                 """
+                sh """
+                   curl -s -X POST https://api.telegram.org/bot7929159352:AAHz-nqnWNu1Qar1_xxnMGcUYGz2AwuQDNw/sendMessage \
+                   -d chat_id=4613643966 \
+                   -d text="${message}"
+                """
             } catch (Exception e) {
                 echo "Failed to read Allure summary: ${e}"
             }
