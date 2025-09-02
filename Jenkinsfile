@@ -31,57 +31,79 @@ node('maven_gev') {
         stage('Checkout') {
             checkout([
                 $class: 'GitSCM',
-                 branches: [[ name: "${params.BRANCH}" ]],
-                 userRemoteConfigs: [[ url: 'https://github.com/gbkocharyan/appium.git' ]]
+                branches: [[ name: "${params.BRANCH}" ]],
+                userRemoteConfigs: [[ url: 'https://github.com/gbkocharyan/appium.git' ]]
             ])
         }
 
         stage('Run Mobile Tests') {
+            // Prepare results folders
             sh "mkdir -p ${WORKSPACE}/allure-results ${WORKSPACE}/allure-report"
             sh "chown -R 1000:1000 ${WORKSPACE}/allure-results ${WORKSPACE}/allure-report"
             sh "chmod -R 777 ${WORKSPACE}/allure-results ${WORKSPACE}/allure-report"
+
+            // Remove existing container if exists
             sh "docker rm -f appium || true"
 
-            // Run container and log everything
+            // Run container with full logging
             sh """
-                echo "=== Starting Docker container ==="
+                echo === Starting Docker container ===
                 docker run --name appium \
                   -v /var/run/docker.sock:/var/run/docker.sock \
                   -v jenkins_home:/var/jenkins_home \
                   -v ${WORKSPACE}/allure-results:/app/allure-results \
                   -v ${WORKSPACE}/allure-report:/app/allure-report \
-                  localhost:5005/mobile_gev \
-                  bash -c "echo '=== Inside container ==='; whoami; pwd; ls -la /app; mvn clean test -DrunType=remote -Dsurefire.ignoreFailures=true -Dallure.results.directory=/app/allure-results || true; echo '=== After tests ==='; ls -la /app/allure-results"
+                  localhost:5005/mobile_gev bash -c "
+                      echo === Inside container ===;
+                      whoami;
+                      pwd;
+                      echo '=== List /app before tests ===';
+                      ls -la /app;
+                      echo '=== Running Maven tests ===';
+                      mvn clean test -DrunType=remote -Dsurefire.ignoreFailures=true -Dallure.results.directory=/app/allure-results || true;
+                      echo '=== After tests ===';
+                      ls -la /app/allure-results;
+                  "
             """
 
-            // Copy results from container (if any)
+            // Copy results from container
             sh "docker cp appium:/app/allure-results ${WORKSPACE}/ || true"
 
-            // Log copied results
-            sh "echo '=== Local Allure Results ==='; ls -la ${WORKSPACE}/allure-results"
+            // List results locally for debug
+            sh """
+                echo === Local Allure Results ===
+                ls -la ${WORKSPACE}/allure-results
+            """
 
             archiveArtifacts artifacts: 'allure-results/**', fingerprint: true
+
+            // Clean up container
             sh "docker rm -f appium || true"
         }
 
     } finally {
         stage('Publish Allure & Notify') {
+            // Generate Allure report
             allure([
                 includeProperties: false,
                 reportBuildPolicy: 'ALWAYS',
                 results: [[ path: "${WORKSPACE}/allure-results" ]]
             ])
 
-            try {
-                sh "echo '=== Listing Allure Report folder ==='; ls -la ${WORKSPACE}/allure-report"
+            // Debug Allure report contents
+            sh """
+                echo === Listing Allure Report folder ===
+                ls -la ${WORKSPACE}/allure-report
+            """
 
+            try {
                 def summaryFile = readFile("${WORKSPACE}/allure-report/widgets/summary.json")
                 def summary = new JsonSlurper().parseText(summaryFile)
 
                 def total = summary.statistic.total ?: 0
                 def passed = summary.statistic.passed ?: 0
-                def message = "📱 Mobile Test Execution Finished\n" +
-                              "✅ Passed: ${passed}/${total}\n" +
+                def message = "📱 Mobile Test Execution Finished\\n" +
+                              "✅ Passed: ${passed}/${total}\\n" +
                               "📊 Allure Report: ${env.BUILD_URL}allure"
 
                 sh """
@@ -90,7 +112,7 @@ node('maven_gev') {
                    -d text="${message}"
                 """
             } catch (Exception e) {
-                // ignore
+                echo "Failed to read Allure summary: ${e}"
             }
         }
     }
