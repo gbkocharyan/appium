@@ -73,7 +73,7 @@ node('maven_gev') {
 
                 sh """
                    curl -s -X POST https://api.telegram.org/bot7929159352:AAHz-nqnWNu1Qar1_xxnMGcUYGz2AwuQDNw/sendMessage \
-                   -d chat_id=-4613643966 \
+                   -d chat_id=1948410043 \
                    -d text="${message}"
                 """
             } catch (Exception e) {
