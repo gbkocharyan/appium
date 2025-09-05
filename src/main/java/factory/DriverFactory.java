@@ -17,8 +17,7 @@ public class DriverFactory {
     URL remoteUrl;
 
     if ("remote".equals(executionMode)) {
-      capabilities.setCapability("appium:app", "/root/tmp/andy.apk");
-      capabilities.setCapability("noSign", true);
+      capabilities.setCapability("appium:app", "/root/tmp/skoda.apk");
       remoteUrl = new URL(REMOTE_APPIUM_URL);
     } else {
       capabilities.setCapability("appium:app", getAppPath());
@@ -36,12 +35,13 @@ public class DriverFactory {
     capabilities.setCapability("appium:noReset", false);
     capabilities.setCapability("appium:uiautomator2ServerInstallTimeout", 180000);
     capabilities.setCapability("appium:adbExecTimeout", 180000);
+    capabilities.setCapability("appium:appPackage", "ru.skoda.service");
     capabilities.setCapability("appium:deviceName", REMOTE_DEVICE_NAME);
     return capabilities;
   }
 
   private String getAppPath() {
-    return System.getProperty("user.dir") + "/src/test/resources/andy.apk";
+    return System.getProperty("user.dir") + "/src/test/resources/skoda.apk";
   }
 
 }

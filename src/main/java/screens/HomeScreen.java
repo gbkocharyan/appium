@@ -2,27 +2,29 @@ package screens;
 
 import static com.codeborne.selenide.appium.SelenideAppium.$;
 
-import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.SelenideElement;
-import com.codeborne.selenide.WebDriverRunner;
 import io.appium.java_client.AppiumBy;
 
-public class HomeScreen {
+public class HomeScreen extends BaseScreen {
 
-  private final SelenideElement exerciseSection = $(AppiumBy.androidUIAutomator("new UiSelector().text(\"Exercise\")"));
-  private final SelenideElement grammarSection = $(AppiumBy.androidUIAutomator("new UiSelector().text(\"Grammar\")"));
-  private final SelenideElement statsSection = $(AppiumBy.androidUIAutomator("new UiSelector().text(\"Stats\")"));
+  private SelenideElement dillers = $(AppiumBy.id("imageCardThreeHomeScreen"));
+  private SelenideElement fillProfile = $(AppiumBy.id("mageCardFourHomeScreen"));
+  private SelenideElement servicesButton = $(AppiumBy.id("mageCardOneHomeScreen"));
+  private SelenideElement supportButton = $(AppiumBy.id("imageCardTwoHomeScreen"));
 
-  public String getExerciseSectionText() {
-    return exerciseSection.getText();
+  public boolean isServicesButtonDisplayed() {
+    return isDisplayed(servicesButton);
   }
 
-  public boolean isGrammarSectionDisplayed() {
-    return grammarSection.shouldBe(Condition.visible).isDisplayed();
+  public boolean isSupportButtonDisplayed() {
+    return isDisplayed(supportButton);
   }
 
-  public boolean isStatsSectionDisplayed() {
-    return statsSection.shouldBe(Condition.visible).isDisplayed();
+  public boolean isDrillersButtonDisplayed() {
+    return isDisplayed(dillers);
   }
 
+  public boolean isFillProfileButtonDisplayed() {
+    return isDisplayed(fillProfile);
+  }
 }

@@ -13,16 +13,16 @@ import org.testng.annotations.BeforeSuite;
 public class TestBase {
 
   protected AppiumDriver driver;
-  private final DriverFactory driverFactory = new DriverFactory();
+  private DriverFactory driverFactory = new DriverFactory();
 
   @BeforeSuite
-  public void beforeAll() throws Exception {
+  public void beforeSuite() throws Exception {
     EmulatorManager.startEmulator();
     AppiumServerManager.startAppiumServer();
   }
 
   @BeforeMethod
-  public void setUp() throws Exception {
+  public void beforeEach() {
     try {
       driver = driverFactory.createDriver();
       WebDriverRunner.setWebDriver(driver);
@@ -42,8 +42,8 @@ public class TestBase {
   }
 
   @AfterSuite
-  public void afterAll() throws Exception {
-    EmulatorManager.stopEmulator();
+  public void afterSuite() throws Exception {
     AppiumServerManager.stopAppiumServer();
+    EmulatorManager.stopEmulator();
   }
 }
