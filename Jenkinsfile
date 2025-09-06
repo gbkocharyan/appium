@@ -9,7 +9,7 @@ node('maven_gev') {
                 name: 'BRANCH',
                 branch: '',
                 branchFilter: 'origin/(.*)',
-                defaultValue: 'master',
+                defaultValue: 'skoda',
                 description: 'Select a Git branch to build',
                 quickFilterEnabled: true,
                 selectedValue: 'DEFAULT',

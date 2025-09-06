@@ -24,7 +24,7 @@ public class TestBase {
   @BeforeMethod
   public void beforeEach() {
     try {
-      driver = driverFactory.createDriver();
+      driver = driverFactory.setUp();
       WebDriverRunner.setWebDriver(driver);
       Guice.createInjector(new GuiceModule())
           .injectMembers(this);
